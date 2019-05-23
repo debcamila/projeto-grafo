@@ -3,8 +3,12 @@ import java.io.IOException;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		GerarDataSet gerarDataset = new GerarDataSet(3);
+		/*GerarDataSet gerarDataset = new GerarDataSet(8);
 		
-		gerarDataset.gerarJson("Cher");
+		gerarDataset.gerarJson("Cher");*/
+		
+		ArtistaData artista = new TestarJson("dataset.json").CarregarDataSet();
+		
+		System.out.println(artista.contarVertices());
 	}
 }

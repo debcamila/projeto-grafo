@@ -47,13 +47,14 @@ public class JsonArtista {
 		String jsonContent;
 		DataOutputStream out;
 		BufferedReader in;
+		String artistasJson;
 		this.conectar();
 		
 		if(!tabelaArtistas.busca(artist)) {
 			tabelaArtistas.inserir(new Artista(artist));
 			try {
 				try {
-					//Thread.sleep(1000);
+					Thread.sleep(500);
 				}catch (Exception e) {
 					e.printStackTrace();
 					System.exit(1);
@@ -72,15 +73,29 @@ public class JsonArtista {
 				con.disconnect();
 				in.close();
 				
-				String artistasJson = this.getJsonAttribute(this.getJsonAttribute(jsonContent, "similarartists"), "artist");				
-				
+				try {
+					artistasJson = this.getJsonAttribute(this.getJsonAttribute(jsonContent, "similarartists"), "artist");				
+				}catch(NullPointerException e) {
+					try {
+						Thread.sleep(20000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					return new Artista[0];
+				}
 				return toArray(artistasJson);
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				con.disconnect();
-				System.exit(1);
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 		return new Artista[0];

@@ -3,6 +3,14 @@ package AVL;
 import repository.Artista;
 
 public class ArtistaTree extends Tree<Artista> {
+	private int qtd;
+	
+	@Override
+	public void inserir(Artista data) {
+		super.inserir(data);
+		qtd++;
+	}
+	
     boolean buscar(String artista, Node<Artista> raiz){
         int comp=artista.compareTo(raiz.data.name);
         if(comp==0){
@@ -25,5 +33,8 @@ public class ArtistaTree extends Tree<Artista> {
     	}else {
     		return false;
     	}
+    }
+    public int getQtdArtistas() {
+    	return qtd;
     }
 }
