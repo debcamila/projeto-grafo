@@ -1,3 +1,4 @@
+package repository;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,8 +13,8 @@ public class GerarDataSet {
 		this.interacoesMaximas = interacoesMaximas;
 	}
 	
-	public void gerarJson(int interacoes) throws IOException {
-		String jsonContent = this.gerarDataSet(interacoes);
+	public void gerarJson(String artista) throws IOException {
+		String jsonContent = this.gerarDataSet(artista, 0);
 		File file = new File("dataset.json");
 		BufferedWriter bWriter;
 		FileWriter writer;
