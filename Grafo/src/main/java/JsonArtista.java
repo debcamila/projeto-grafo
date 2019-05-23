@@ -7,24 +7,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class LoadDataSet {
+public class JsonArtista {
 	private HttpURLConnection con;
 	
-	public LoadDataSet() {
+	public JsonArtista() {
 		try {
 			URL url = new URL("http://ws.audioscrobbler.com/2.0");
 			try {
 				con = (HttpURLConnection)url.openConnection();
-				con.setConnectTimeout(5000);
-				con.setReadTimeout(5000);
+				con.setConnectTimeout(10000);
+				con.setReadTimeout(10000);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -35,48 +37,63 @@ public class LoadDataSet {
 		}
 		
 	}
-	public void getSimilares(String artist, String key) throws IOException{
-		/*String params = "method=artist.getsimilar&artist="+artist+"&api_key="+key+"&format=json";
+	public Artista[] getSimilares(String artist, String key) throws IOException{
+		String params = "method=artist.getsimilar&artist="+artist+"&api_key="+key+"&format=json";
 		String jsonContent;
 		DataOutputStream out;
 		BufferedReader in;
+		File file = new File("datasets\\"+artist+".json");
+		FileWriter writer;
+		BufferedWriter buWriter;
 		
-		try {
-			con.setDoOutput(true);
-			out = new DataOutputStream(con.getOutputStream());
-			out.writeBytes(params);
-			out.flush();
-			out.close();
-			
-			con.setConnectTimeout(5000);
-			con.setReadTimeout(5000);
-			
-			in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			jsonContent = in.readLine();
-			
-			System.out.println(getJsonAttribute(jsonContent, "similarartists"));
-			
-			con.disconnect();
-					in.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		
-		String artistasJson = this.getJsonAttributeString(this.getJsonAttribute("a", "similarartists"), "artist");
-		
-		Artista[] artistas = this.toArray(artistasJson);
-		
-		for(Artista item : artistas) {
-			System.out.println(item.getNome());
+		if(!file.exists()){
+			file.createNewFile();
+			/*try {
+				con.setDoOutput(true);
+				out = new DataOutputStream(con.getOutputStream());
+				out.writeBytes(params);
+				out.flush();
+				out.close();
+				
+				con.setConnectTimeout(50000);
+				con.setReadTimeout(50000);
+				
+				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				jsonContent = in.readLine();
+								
+				con.disconnect();
+				in.close();
+				
+				String artistasJson = this.getJsonAttribute(this.getJsonAttribute(jsonContent, "similarartists"), "artist");
+				
+				System.out.println(artistasJson);
+				
+				writer = new FileWriter(file);
+				
+				buWriter = new BufferedWriter(writer);
+				buWriter.write(artistasJson);
+				
+				buWriter.flush();
+				buWriter.close();
+				writer.flush();
+				writer.close();
+				
+				return toArray(artistasJson);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 		}
+		
+		return new Artista[0];
+		
 
 	}
-	public String getJsonAttribute(String json, String atr) throws IOException {
-		String jsonString = "{\"map_\":{\"FirstName\":\"Deepak\",\"LastName\":\"Kabra\"}}";
-
+	private String getJsonAttribute(String json, String atr) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode obj = mapper.readTree(new File("dadosteste.json"));
+		JsonNode obj = mapper.readTree(json);
 		JsonNode desiredString = obj.get(atr);
 		
 		return desiredString.toString();
@@ -87,14 +104,14 @@ public class LoadDataSet {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper.readValue(json, Artista[].class);
 	}
-	public String getJsonAttributeString(String json, String atr) throws IOException {
-		String jsonString = "{\"map_\":{\"FirstName\":\"Deepak\",\"LastName\":\"Kabra\"}}";
-
+	
+	public Artista[] fromJson() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode obj = mapper.readTree(json);
-		JsonNode desiredString = obj.get(atr);
+		JsonNode obj = mapper.readTree(new File("dadosteste.json"));
 		
-		return desiredString.toString();
+		String artistasJson = this.getJsonAttribute(obj.get("similarartists").toString(), "artist");
+		
+		return this.toArray(artistasJson);
 		
 	}
 }
