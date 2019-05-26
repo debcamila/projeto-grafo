@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import AVL.ArtistaTree;
+import de.umass.lastfm.Artist;
 
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -19,11 +21,10 @@ import java.net.URL;
 
 public class JsonArtista {
 	private HttpURLConnection con;
-	private ArtistaTree tabelaArtistas;
-	private int cont=0;
+	public static ArtistaTree tabelaArtistas = new ArtistaTree();
+	public static int cont=0;
 	
 	public JsonArtista() {
-		tabelaArtistas = new ArtistaTree();
 	}
 	
 	public void conectar() {
@@ -42,64 +43,54 @@ public class JsonArtista {
 			e.printStackTrace();
 		}
 	}
-	public Artista[] getSimilares(String artist, String key) throws IOException{
-		String params = "method=artist.getsimilar&artist="+artist+"&api_key="+key+"&limit=10&format=json";
-		String jsonContent;
-		DataOutputStream out;
-		BufferedReader in;
-		String artistasJson;
-		this.conectar();
+	public Artista[] getSimilares(String artista, String key) throws IOException{
+		List<Artist> artistObj=null;
+		Artista[] artistas;
 		
-		if(!tabelaArtistas.busca(artist)) {
-			tabelaArtistas.inserir(new Artista(artist));
+		if(!tabelaArtistas.busca(artista) && this.cont<=180) {
+			cont++;
+			System.out.println(cont+":"+artista);
+			
+			tabelaArtistas.inserir(new Artista(artista));
+			
+			artistas= new Artista[10];
 			try {
+			artistObj = (List<Artist>) Artist.getSimilar(artista, 10, key);
+			}catch(Exception e) {
 				try {
-					Thread.sleep(500);
-				}catch (Exception e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-				con.setDoOutput(true);
-				out = new DataOutputStream(con.getOutputStream());
-				out.writeBytes(params);
-				out.flush();
-				out.close();
-				
-				cont++;
-				System.out.println(cont+":"+artist);
-				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-				jsonContent = in.readLine();
-								
-				con.disconnect();
-				in.close();
-				
-				try {
-					artistasJson = this.getJsonAttribute(this.getJsonAttribute(jsonContent, "similarartists"), "artist");				
-				}catch(NullPointerException e) {
-					try {
-						Thread.sleep(20000);
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					Thread.sleep(30000);
 					return new Artista[0];
-				}
-				return toArray(artistasJson);
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				con.disconnect();
-				try {
-					Thread.sleep(10000);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
+			
+			if(this.cont%200==0) {
+				try {
+					Thread.sleep(30000);
+				}catch(Exception e) {
+					e.printStackTrace();					
+				}
+			}
+			
+			if(artistObj==null) {
+				return new Artista[0];
+			}
+			
+			for(int i=0; i<artistas.length; i++) {
+				try {
+					if(artistObj.size()>0) {
+						artistas[i] = new Artista(artistObj.get(i).getName());
+					}
+				}catch(Exception e){
+					return new Artista[0];
+				}
+			}
+			
+			return artistas;
 		}
 		return new Artista[0];
-		
 
 	}
 	private String getJsonAttribute(String json, String atr) throws IOException {
