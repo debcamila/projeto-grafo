@@ -54,7 +54,7 @@ public class ArtistaDataCollection {
 		
 		return nRequisitados;
 	}
-	public void gerarVertices(Graph<Artista, DefaultEdge> grafo){
+	public void gerarVertices(Graph<String, DefaultEdge> grafo){
 		int percent=0;
 		int cont=0;
 		ArtistaTree tree = this.pegarArvore();
@@ -64,14 +64,14 @@ public class ArtistaDataCollection {
 		
 		for(Artista item : artistas) {
 			cont++;
-			grafo.addVertex(item);
+			grafo.addVertex(item.name);
 			if((cont%(artistas.size()/10))==0) {
 				percent++;
 				System.out.println("Adicionados:"+percent+"0%");
 			}
 		}		
 	}
-	public void gerarArestas(Graph<Artista, DefaultEdge> grafo) {
+	public void gerarArestas(Graph<String, DefaultEdge> grafo) {
 		for(ArtistaData artista : listArtistaData) {
 			artista.gerarArestas(grafo);
 		}

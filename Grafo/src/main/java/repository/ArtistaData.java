@@ -53,49 +53,6 @@ public class ArtistaData extends Artista {
 			similar[i].verRequisicoes(tree);
 		}
 	}
-	public void verNaoRequisitados() {
-		File file = new File("nRequisitados.txt");
-		FileWriter fileWriter;
-		BufferedWriter bWriter;
-		int cont=0;
-				
-		List<Artista> nRequisitados = new ArrayList();
-		ArtistaTree requests = this.requisicoes();
-		this.verNaoRequisitadosNode(requests, nRequisitados);
-		
-		if(!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-		
-		try {
-			fileWriter = new FileWriter(file);
-			bWriter = new BufferedWriter(fileWriter);
-			
-			for(Artista item : nRequisitados) {
-				cont++;
-				bWriter.write(item.name);
-				bWriter.newLine();
-				if(cont%100==0) {
-					bWriter.flush();
-				}
-			}
-			bWriter.flush();
-			bWriter.close();
-			fileWriter.close();			
-		}catch(Exception e) {
-			System.err.println(e.getMessage());
-		}
-		
-		System.out.println(cont);
-		
-		
-	}
 	public List<Artista> verNaoRequisitadosList(){
 		List<Artista> nRequisitados = new ArrayList();
 		ArtistaTree requests = this.requisicoes();
@@ -114,11 +71,14 @@ public class ArtistaData extends Artista {
 			similar[i].verNaoRequisitadosNode(tree, nRequisitados);
 		}
 	}
-	public void gerarArestas(Graph<Artista, DefaultEdge> grafo) {
+	public void gerarArestas(Graph<String, DefaultEdge> grafo) {
 		for(ArtistaData artistaSimilar : similar) {
-			if(!grafo.containsEdge(this, artistaSimilar)) {
-				grafo.addEdge(this, artistaSimilar);
+			if(!this.name.equals(artistaSimilar.name)) {
+				if(!grafo.containsEdge(this.name, artistaSimilar.name)) {
+					grafo.addEdge(this.name, artistaSimilar.name);
+				}
 			}
+			artistaSimilar.gerarArestas(grafo);
 		}
 	}
 }
