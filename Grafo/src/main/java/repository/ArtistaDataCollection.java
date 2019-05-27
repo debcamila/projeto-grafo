@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 import AVL.ArtistaTree;
 
 public class ArtistaDataCollection {
@@ -11,8 +14,9 @@ public class ArtistaDataCollection {
 	
 	public ArtistaDataCollection() {
 		this.listArtistaData = new ArrayList<ArtistaData>();
+		this.gerarCollection();
 	}
-	public void gerarCollection() {
+	final void gerarCollection() {
 		File file = new File("datasets");
 		File[] arquivos = file.listFiles();
 		TestarJson lerJson = new TestarJson();
@@ -49,5 +53,27 @@ public class ArtistaDataCollection {
 		}
 		
 		return nRequisitados;
+	}
+	public void gerarVertices(Graph<Artista, DefaultEdge> grafo){
+		int percent=0;
+		int cont=0;
+		ArtistaTree tree = this.pegarArvore();
+		
+		List<Artista> artistas = tree.toList();
+		
+		
+		for(Artista item : artistas) {
+			cont++;
+			grafo.addVertex(item);
+			if((cont%(artistas.size()/10))==0) {
+				percent++;
+				System.out.println("Adicionados:"+percent+"0%");
+			}
+		}		
+	}
+	public void gerarArestas(Graph<Artista, DefaultEdge> grafo) {
+		for(ArtistaData artista : listArtistaData) {
+			artista.gerarArestas(grafo);
+		}
 	}
 }

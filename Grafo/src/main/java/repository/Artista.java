@@ -14,5 +14,10 @@ public class Artista implements Comparable<Artista>{
 	public int compareTo(Artista artista) {
 		return this.name.compareTo(artista.name);
 	}
-
+	public boolean equals(Artista artista) {
+		return this.name.equals(artista.name);
+	}
+	public int hashCode() {
+		return 1;
+	}
 }

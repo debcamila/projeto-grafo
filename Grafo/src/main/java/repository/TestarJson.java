@@ -23,10 +23,11 @@ public class TestarJson {
 	}
 	public ArtistaData CarregarDataSet() {
 		ObjectMapper data = new ObjectMapper();
+		ArtistaData datas = null;
 		
 		try {
-			return data.readValue(jsonContent, ArtistaData.class);
-			
+			datas = data.readValue(jsonContent, ArtistaData.class);
+			return datas;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());

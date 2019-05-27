@@ -7,12 +7,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import AVL.ArtistaTree;
 
 public class ArtistaData extends Artista {
 	private ArtistaData[] similar;
+	private static int cont=0;
 	
 	public ArtistaData(@JsonProperty("name") String name, 
 					   @JsonProperty("similar") ArtistaData[] similar) {
@@ -31,11 +35,9 @@ public class ArtistaData extends Artista {
 		return tree;
 	}
 	void inserirNaArvore(ArtistaTree tree) {
+		tree.inserir(this);
 		for(int i=0; i<this.similar.length; i++) {
-			if(!tree.busca(similar[i].name) || similar[i].similar.length>0) {
-				tree.inserir(similar[i]);
-				similar[i].inserirNaArvore(tree);
-			}
+			similar[i].inserirNaArvore(tree);
 		}
 	}
 	public ArtistaTree requisicoes() {
@@ -112,4 +114,12 @@ public class ArtistaData extends Artista {
 			similar[i].verNaoRequisitadosNode(tree, nRequisitados);
 		}
 	}
+	public void gerarArestas(Graph<Artista, DefaultEdge> grafo) {
+		for(ArtistaData artistaSimilar : similar) {
+			if(!grafo.containsEdge(this, artistaSimilar)) {
+				grafo.addEdge(this, artistaSimilar);
+			}
+		}
+	}
 }
+

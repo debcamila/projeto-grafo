@@ -25,23 +25,23 @@ public class Tree<T extends Comparable<T>> {
             if(comp==0) {
                 return raiz;
             }else if(comp<0) {
-		raiz.left=inserirNode(data, raiz.left);
-		if(increase) {
-                    raiz.fatBal--;
-                    if(raiz.fatBal==0) {
-                        increase=false;
-                    }
-                    raiz=rebalancearEsq(raiz);
-		}
+				raiz.left=inserirNode(data, raiz.left);
+				if(increase) {
+		                    raiz.fatBal--;
+		                    if(raiz.fatBal==0) {
+		                        increase=false;
+		                    }
+		                    raiz=rebalancearEsq(raiz);
+				}
             }else {
-		raiz.right=inserirNode(data, raiz.right);
-		if(increase) {
-                    raiz.fatBal++;
-                    if(raiz.fatBal==0) {
-			increase=false;
-                    }
-                    raiz=rebalancearDir(raiz);
-		}
+				raiz.right=inserirNode(data, raiz.right);
+				if(increase) {
+		                    raiz.fatBal++;
+		                    if(raiz.fatBal==0) {
+					increase=false;
+		                    }
+		                    raiz=rebalancearDir(raiz);
+				}
             }
 	}
 	return raiz;
